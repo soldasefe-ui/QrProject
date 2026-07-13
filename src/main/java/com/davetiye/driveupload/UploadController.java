@@ -48,6 +48,7 @@ public class UploadController {
             redirectAttributes.addFlashAttribute("error", "Yükleme hatası! Lütfen tekrar deneyin.");
         }
 
+        // BURAYI UNUTMUŞUZ! Yükleme bitince mutlaka yönlendirmeliyiz.
         return "redirect:/yukle?id=" + folderId + (coupleName != null ? "&isim=" + coupleName : "");
     }
 
