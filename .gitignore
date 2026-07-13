@@ -1,0 +1,26 @@
+# --- Java Build & Output ---
+target/
+build/
+.gradle/
+.mvn/
+mvnw
+mvnw.cmd
+
+# --- IDE Settings ---
+.idea/
+*.iml
+*.iws
+*.ipr
+*.classpath
+*.project
+*.settings/
+.vscode/
+
+# --- OS Artıkları ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# --- Gizli Kalması Gerekenler ---
+firebase-key.json
+application-local.properties

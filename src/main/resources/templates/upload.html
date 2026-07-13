@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anı Duvarı ✨</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="couple-frame">
+        <img th:src="@{'/images/' + ${folderId} + '.jpg'}"
+             onerror="this.src='https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=400';"
+             class="couple-photo" alt="Couple">
+    </div>
+
+    <h1>
+        <span th:text="${coupleName}">Çiftin İsimleri</span>
+        <br>
+        <span>Anı Albümü</span>
+    </h1>
+    <p class="subtitle">Anılarınızı bizimle paylaşın</p>
+
+    <div th:if="${message}" class="alert alert-success" style="color: #2e7d32; margin-bottom: 20px;" th:text="${message}"></div>
+
+    <form th:action="@{/upload}" method="post" enctype="multipart/form-data" id="uploadForm">
+        <input type="hidden" name="folderId" th:value="${folderId}">
+
+        <div class="upload-card" onclick="document.getElementById('fileInput').click()">
+            <svg class="camera-icon" viewBox="0 0 24 24">
+                <path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+            </svg>
+            <p class="upload-text" id="fileText">Fotoğraf Seç</p>
+            <p class="upload-subtext">Anılar paylaştıkça çoğalır :))</p>
+            <input type="file" name="file" id="fileInput" accept="image/*" onchange="updateText(this)">
+        </div>
+
+        <button type="submit" class="btn-submit">Albüme Gönder ✨</button>
+    </form>
+
+    <div id="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p style="color: #4a3f35; font-size: 0.8rem;">Anınız ölümsüzleştiriliyor...</p>
+    </div>
+</div>
+
+<script>
+    function updateText(input) {
+        if (input.files[0]) {
+            document.getElementById('fileText').innerText = "✅ " + input.files[0].name;
+            document.getElementById('fileText').style.color = "#4a3f35";
+        }
+    }
+    document.getElementById('uploadForm').onsubmit = function() {
+        this.style.display = 'none';
+        document.getElementById('loading').style.display = 'block';
+    };
+</script>
+
+</body>
+</html>
