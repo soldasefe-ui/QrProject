@@ -22,14 +22,14 @@
     </h1>
     <p class="subtitle">Anılarınızı bizimle paylaşın</p>
 
-    <div th:if="${message}"
+    <div th:if="${param.status != null && param.status[0] == 'basarili'}"
          style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; text-align: center;">
-        <strong th:text="${message}"></strong>
+        <strong>Harika! Fotoğraflar başarıyla yüklendi. ✨</strong>
     </div>
 
-    <div th:if="${error}"
+    <div th:if="${param.status != null && param.status[0] == 'hata'}"
          style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb; text-align: center;">
-        <strong th:text="${error}"></strong>
+        <strong>Yükleme sırasında bir hata oluştu! Lütfen tekrar deneyin.</strong>
     </div>
 
     <form th:action="@{/upload}" method="post" enctype="multipart/form-data" id="uploadForm">
@@ -37,21 +37,23 @@
         <input type="hidden" name="isim" th:value="${coupleName}">
 
         <div class="upload-card" onclick="document.getElementById('fileInput').click()">
-            <svg class="camera-icon" viewBox="0 0 24 24">
+            <svg class="camera-icon" viewBox="0 0 24 24" style="width: 50px; height: 50px; fill: #4a3f35;">
                 <path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
             </svg>
-            <p class="upload-text" id="fileText">Fotoğrafları Seç</p>
+            <p class="upload-text" id="fileText" style="font-size: 1.2rem; font-weight: bold; margin: 10px 0;">Fotoğrafları Seç</p>
             <p class="upload-subtext">Anılar paylaştıkça çoğalır :))</p>
 
             <input type="file" name="files" id="fileInput" accept="image/*" multiple onchange="updateText(this)" style="display:none;">
         </div>
 
-        <button type="submit" class="btn-submit">Albüme Gönder ✨</button>
+        <button type="submit" class="btn-submit" style="width: 100%; padding: 15px; margin-top: 20px; background-color: #4a3f35; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">
+            Albüme Gönder ✨
+        </button>
     </form>
 
-    <div id="loading" style="display: none;">
-        <div class="spinner"></div>
-        <p style="color: #4a3f35; font-size: 0.8rem;">Anılarınız bulutlara uçuyor...</p>
+    <div id="loading" style="display: none; text-align: center; margin-top: 20px;">
+        <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #4a3f35; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+        <p style="color: #4a3f35; font-size: 0.9rem; font-weight: bold;">Anılarınız bulutlara uçuyor...</p>
     </div>
 </div>
 
@@ -70,6 +72,10 @@
         document.getElementById('loading').style.display = 'block';
     };
 </script>
+
+<style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
 
 </body>
 </html>

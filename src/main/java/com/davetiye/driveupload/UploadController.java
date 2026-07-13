@@ -39,8 +39,9 @@ public class UploadController {
 
         // 1. Dosya kontrolü
         if (files == null || files.isEmpty() || (files.size() == 1 && files.get(0).isEmpty())) {
-            redirectAttributes.addFlashAttribute("error", "Lütfen en az bir fotoğraf seçin!");
-            return "redirect:/yukle?id=" + folderId + (coupleName != null ? "&isim=" + coupleName : "");
+            return "redirect:/yukle?id=" + folderId +
+                    (coupleName != null ? "&isim=" + coupleName : "") +
+                    "&status=hata";
         }
 
         int successCount = 0;
@@ -58,16 +59,12 @@ public class UploadController {
             }
         }
 
-        // 3. Sonuç mesajını yönetme
-        if (successCount > 0 && errorCount == 0) {
-            redirectAttributes.addFlashAttribute("message", successCount + " adet fotoğraf başarıyla yüklendi! ✨");
-        } else if (successCount > 0 && errorCount > 0) {
-            redirectAttributes.addFlashAttribute("message", successCount + " fotoğraf yüklendi, ancak " + errorCount + " tanesinde hata oluştu.");
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Yükleme sırasında bir hata oluştu. Lütfen tekrar deneyin.");
-        }
+        // 3. Durum koduna göre yönlendirme
+        String status = (successCount > 0 && errorCount == 0) ? "basarili" : "hata";
 
-        return "redirect:/yukle?id=" + folderId + (coupleName != null ? "&isim=" + coupleName : "");
+        return "redirect:/yukle?id=" + folderId +
+                (coupleName != null ? "&isim=" + coupleName : "") +
+                "&status=" + status;
     }
 
     @GetMapping("/qr-uret-sayfasi")
