@@ -22,7 +22,15 @@
     </h1>
     <p class="subtitle">Anılarınızı bizimle paylaşın</p>
 
-    <div th:if="${message}" class="alert alert-success" style="color: #2e7d32; margin-bottom: 20px;" th:text="${message}"></div>
+    <div th:if="${message}"
+         style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb; text-align: center;">
+        <strong th:text="${message}"></strong>
+    </div>
+
+    <div th:if="${error}"
+         style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb; text-align: center;">
+        <strong th:text="${error}"></strong>
+    </div>
 
     <form th:action="@{/upload}" method="post" enctype="multipart/form-data" id="uploadForm">
         <input type="hidden" name="folderId" th:value="${folderId}">
@@ -43,7 +51,7 @@
 
     <div id="loading" style="display: none;">
         <div class="spinner"></div>
-        <p style="color: #4a3f35; font-size: 0.8rem;">Anınız ölümsüzleştiriliyor...</p>
+        <p style="color: #4a3f35; font-size: 0.8rem;">Anılarınız bulutlara uçuyor...</p>
     </div>
 </div>
 

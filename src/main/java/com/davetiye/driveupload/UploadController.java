@@ -32,22 +32,40 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("files") List<MultipartFile> files, // Listeye çevirdik
+    public String handleFileUpload(@RequestParam("files") List<MultipartFile> files,
                                    @RequestParam("folderId") String folderId,
                                    @RequestParam(value = "isim", required = false) String coupleName,
                                    RedirectAttributes redirectAttributes) {
 
-        if (files == null || files.isEmpty()) {
+        // 1. Dosya kontrolü
+        if (files == null || files.isEmpty() || (files.size() == 1 && files.get(0).isEmpty())) {
             redirectAttributes.addFlashAttribute("error", "Lütfen en az bir fotoğraf seçin!");
             return "redirect:/yukle?id=" + folderId + (coupleName != null ? "&isim=" + coupleName : "");
         }
 
-        // Döngüye alıp hepsini tek tek yüklüyoruz
+        int successCount = 0;
+        int errorCount = 0;
+
+        // 2. Döngü ile yükleme
         for (MultipartFile file : files) {
-            driveService.uploadFileToFolder(file, folderId);
+            if (!file.isEmpty()) {
+                String fileId = driveService.uploadFileToFolder(file, folderId);
+                if (fileId != null) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+            }
         }
 
-        redirectAttributes.addFlashAttribute("message", "Tüm fotoğraflar başarıyla yüklendi! ✨");
+        // 3. Sonuç mesajını yönetme
+        if (successCount > 0 && errorCount == 0) {
+            redirectAttributes.addFlashAttribute("message", successCount + " adet fotoğraf başarıyla yüklendi! ✨");
+        } else if (successCount > 0 && errorCount > 0) {
+            redirectAttributes.addFlashAttribute("message", successCount + " fotoğraf yüklendi, ancak " + errorCount + " tanesinde hata oluştu.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Yükleme sırasında bir hata oluştu. Lütfen tekrar deneyin.");
+        }
 
         return "redirect:/yukle?id=" + folderId + (coupleName != null ? "&isim=" + coupleName : "");
     }
