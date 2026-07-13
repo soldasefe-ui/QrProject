@@ -26,16 +26,16 @@ public class GoogleDriveService {
     @PostConstruct
     public void init() {
         try {
-            InputStream serviceAccount = null;
+            InputStream serviceAccount;
 
-            // 1. ÖNCE: Ortam değişkenini (Railway) kontrol et
+            // Railway ortamında mıyız diye kontrol et
             String firebaseJson = System.getenv("FIREBASE_KEY_JSON");
 
             if (firebaseJson != null && !firebaseJson.trim().isEmpty()) {
-                // BULUT: Değişkeni oku
+                // BULUT: Railway ortamı için değişkeni oku
                 serviceAccount = new ByteArrayInputStream(firebaseJson.getBytes(StandardCharsets.UTF_8));
             } else {
-                // YEREL: Dosyayı oku (Dosya yoksa hata fırlatacak)
+                // YEREL: resources klasöründeki dosyayı oku
                 ClassPathResource resource = new ClassPathResource("firebase-key.json");
                 serviceAccount = resource.getInputStream();
             }
@@ -46,11 +46,9 @@ public class GoogleDriveService {
 
             this.storage = storageOptions.getService();
         } catch (Exception e) {
-            // Hatanın nedenini loglara daha detaylı yazdıralım
             System.err.println("Firebase başlatılamadı: " + e.getMessage());
             e.printStackTrace();
         }
-
     }
 
     public String uploadFileToFolder(MultipartFile file, String folderId) {

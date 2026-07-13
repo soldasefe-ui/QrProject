@@ -14,6 +14,7 @@ public class UploadController {
     private final GoogleDriveService driveService;
     private final QRCodeService qrCodeService;
 
+    // Constructor: Her iki servisi de burada başlatıyoruz
     public UploadController(GoogleDriveService driveService, QRCodeService qrCodeService) {
         this.driveService = driveService;
         this.qrCodeService = qrCodeService;
@@ -22,11 +23,9 @@ public class UploadController {
     @GetMapping("/yukle")
     public String showUploadPage(@RequestParam("id") String folderId,
                                  @RequestParam(value = "isim", required = false) String coupleName,
-                                 @RequestParam(value = "foto", required = false) String fotoUrl,
                                  Model model) {
         model.addAttribute("folderId", folderId);
         model.addAttribute("coupleName", coupleName);
-        model.addAttribute("fotoUrl", fotoUrl);
         return "upload";
     }
 
@@ -52,22 +51,17 @@ public class UploadController {
         return "redirect:/yukle?id=" + folderId + (coupleName != null ? "&isim=" + coupleName : "");
     }
 
-    // YÖNETİM PANELİ İÇİN: QR Kod Üretme
-    // Bu sayfa form içerir
     @GetMapping("/qr-uret-sayfasi")
     public String showQrGenerationPage() {
-        return "qr-uret"; // resources/templates/qr-uret.html
+        return "qr-uret";
     }
 
-    // QR Kodun resmini döndüren kısım
     @GetMapping(value = "/qr-uret", produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     public ResponseEntity<byte[]> getQRCode(@RequestParam("id") String folderId,
                                             @RequestParam("isim") String coupleName) {
 
-        // URL'deki boşlukları veya özel karakterleri tarayıcının anlayacağı forma çevirelim
         String encodedName = java.net.URLEncoder.encode(coupleName, java.nio.charset.StandardCharsets.UTF_8);
-
         String targetUrl = "https://qrproject.up.railway.app/yukle?id=" + folderId + "&isim=" + encodedName;
 
         byte[] qrCodeBytes = qrCodeService.generateQRCodeImage(targetUrl, 350, 350);
