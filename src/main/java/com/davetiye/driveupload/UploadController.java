@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 public class UploadController {
 
@@ -30,25 +32,23 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file,
+    public String handleFileUpload(@RequestParam("files") List<MultipartFile> files, // Listeye çevirdik
                                    @RequestParam("folderId") String folderId,
                                    @RequestParam(value = "isim", required = false) String coupleName,
                                    RedirectAttributes redirectAttributes) {
 
-        if (file.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Lütfen bir fotoğraf seçin!");
+        if (files == null || files.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Lütfen en az bir fotoğraf seçin!");
             return "redirect:/yukle?id=" + folderId + (coupleName != null ? "&isim=" + coupleName : "");
         }
 
-        String fileId = driveService.uploadFileToFolder(file, folderId);
-
-        if (fileId != null) {
-            redirectAttributes.addFlashAttribute("message", "Harika! Fotoğraf başarıyla yüklendi. ✨");
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Yükleme hatası! Lütfen tekrar deneyin.");
+        // Döngüye alıp hepsini tek tek yüklüyoruz
+        for (MultipartFile file : files) {
+            driveService.uploadFileToFolder(file, folderId);
         }
 
-        // BURAYI UNUTMUŞUZ! Yükleme bitince mutlaka yönlendirmeliyiz.
+        redirectAttributes.addFlashAttribute("message", "Tüm fotoğraflar başarıyla yüklendi! ✨");
+
         return "redirect:/yukle?id=" + folderId + (coupleName != null ? "&isim=" + coupleName : "");
     }
 
