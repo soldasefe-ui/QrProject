@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" th:href="@{/css/album.css}">
+
+    <title>Anı Albümü</title>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1 class="album-title">
+
+        <span th:if="${coupleName != null}"
+              th:text="${coupleName}"></span>
+
+        <span th:if="${coupleName != null}">
+            &nbsp;•&nbsp;
+        </span>
+
+        Anı Albümü
+
+    </h1>
+
+    <div class="title-line"></div>
+
+    <p class="subtitle">
+        Misafirlerinizin paylaştığı tüm güzel anılar tek bir albümde 📸
+    </p>
+
+    <!-- İndirme -->
+    <div class="download-section">
+
+        <button id="downloadBtn"
+                class="download-btn"
+                onclick="downloadZip()">
+
+             Tüm Fotoğrafları İndir
+
+        </button>
+
+        <div id="downloadStatus" class="download-status">
+
+            <div class="progress-track">
+
+                <div class="progress-bar"></div>
+
+            </div>
+
+            <span class="download-text">
+
+                ZIP hazırlanıyor...
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="count">
+        <div class="count-card">
+            Toplam Biriktirilen Anı:
+            <span th:text="${photos.size()}"></span>
+        </div>
+    </div>
+
+    <div th:if="${photos.isEmpty()}" class="empty">
+
+        Henüz fotoğraf yüklenmemiş.
+
+    </div>
+
+    <div class="gallery" th:unless="${photos.isEmpty()}">
+
+        <div th:each="photo : ${photos}">
+
+            <img
+                    th:src="${photo.imageUrl}"
+                    th:alt="${photo.fileName}"
+                    th:attr="data-url=${photo.imageUrl}"
+                    onclick="openImage(this.dataset.url)">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Tam ekran fotoğraf -->
+
+<div class="overlay" id="overlay">
+
+    <span class="close" onclick="closeImage()">&times;</span>
+
+    <img id="bigImage" alt="Fotoğraf">
+
+</div>
+
+
+<!-- Thymeleaf değişkenlerini JS'e aktar -->
+
+<script th:inline="javascript">
+
+    const folderId = [[${folderId}]];
+
+</script>
+
+<script th:src="@{/js/album.js}"></script>
+
+</body>
+</html>

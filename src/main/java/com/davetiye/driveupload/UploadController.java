@@ -87,4 +87,54 @@ public class UploadController {
         }
         return ResponseEntity.badRequest().build();
     }
+
+    @GetMapping("/album")
+    public String showAlbum(@RequestParam("id") String folderId,
+                            Model model) {
+
+        model.addAttribute("photos", driveService.listPhotos(folderId));
+        model.addAttribute("folderId", folderId);
+
+        // FolderId'yi okunabilir isme çevir
+        String coupleName = folderId
+                .replace("-", " & ")
+                .replace("_", " & ");
+
+        // Her kelimenin ilk harfini büyüt
+        StringBuilder formatted = new StringBuilder();
+
+        for (String part : coupleName.split(" ")) {
+
+            if (part.equals("&")) {
+                formatted.append("& ");
+                continue;
+            }
+
+            formatted.append(
+                    part.substring(0,1).toUpperCase()
+                            + part.substring(1).toLowerCase()
+                            + " "
+            );
+        }
+
+        model.addAttribute("coupleName", formatted.toString().trim());
+
+        return "album";
+    }
+    @GetMapping("/album/download")
+    public ResponseEntity<byte[]> downloadAlbum(
+            @RequestParam("id") String folderId) {
+
+        byte[] zip = driveService.downloadFolderAsZip(folderId);
+
+        if (zip == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition",
+                        "attachment; filename=\"" + folderId + ".zip\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(zip);
+    }
 }
